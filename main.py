@@ -1,6 +1,8 @@
 URL = "http://programmer100.pythonanywhere.com/tours/"
 import requests 
 import selectorlib
+from send_email import send_email
+import time
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 def scrape(URL = URL):
@@ -24,12 +26,13 @@ def read_extracted():
     with open("data.txt","r") as file:
         content = file.read()
     return content
-
-scraped = scrape()
-extracted = extract(scraped)
-if extracted != "No upcoming tours":
-    if extracted not in read_extracted():
-        send_email()
-        store(extracted)
-        
-print(extracted)
+while True:
+    scraped = scrape()
+    extracted = extract(scraped)
+    if extracted != "No upcoming tours":
+        if extracted not in read_extracted():
+            send_email(extracted)
+            store(extracted)
+            
+    print(extracted)
+    time.sleep(5)
